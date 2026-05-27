@@ -9,38 +9,74 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TrackClaimIdRouteImport } from './routes/track.$claimId'
+import { Route as ClaimNewRouteImport } from './routes/claim.new'
 
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrackClaimIdRoute = TrackClaimIdRouteImport.update({
+  id: '/$claimId',
+  path: '/$claimId',
+  getParentRoute: () => TrackRoute,
+} as any)
+const ClaimNewRoute = ClaimNewRouteImport.update({
+  id: '/claim/new',
+  path: '/claim/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/track': typeof TrackRouteWithChildren
+  '/claim/new': typeof ClaimNewRoute
+  '/track/$claimId': typeof TrackClaimIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/track': typeof TrackRouteWithChildren
+  '/claim/new': typeof ClaimNewRoute
+  '/track/$claimId': typeof TrackClaimIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/track': typeof TrackRouteWithChildren
+  '/claim/new': typeof ClaimNewRoute
+  '/track/$claimId': typeof TrackClaimIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/track' | '/claim/new' | '/track/$claimId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/track' | '/claim/new' | '/track/$claimId'
+  id: '__root__' | '/' | '/track' | '/claim/new' | '/track/$claimId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  TrackRoute: typeof TrackRouteWithChildren
+  ClaimNewRoute: typeof ClaimNewRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +84,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/track/$claimId': {
+      id: '/track/$claimId'
+      path: '/$claimId'
+      fullPath: '/track/$claimId'
+      preLoaderRoute: typeof TrackClaimIdRouteImport
+      parentRoute: typeof TrackRoute
+    }
+    '/claim/new': {
+      id: '/claim/new'
+      path: '/claim/new'
+      fullPath: '/claim/new'
+      preLoaderRoute: typeof ClaimNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface TrackRouteChildren {
+  TrackClaimIdRoute: typeof TrackClaimIdRoute
+}
+
+const TrackRouteChildren: TrackRouteChildren = {
+  TrackClaimIdRoute: TrackClaimIdRoute,
+}
+
+const TrackRouteWithChildren = TrackRoute._addFileChildren(TrackRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  TrackRoute: TrackRouteWithChildren,
+  ClaimNewRoute: ClaimNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
