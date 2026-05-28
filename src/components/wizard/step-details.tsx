@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,8 +35,17 @@ const DAMAGE_TYPES = [
   "Other",
 ];
 
+function ErrorBanner({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-xs font-medium text-danger">
+      <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+      {children}
+    </div>
+  );
+}
+
 export function StepDetails() {
-  const { data, patch } = useWizard();
+  const { data, patch, attempts } = useWizard();
   const [brandOpen, setBrandOpen] = useState(false);
   const isLost = data.type?.startsWith("lost");
 
@@ -46,6 +55,14 @@ export function StepDetails() {
       : [...data.item.damageTypes, t];
     patch("item", { damageTypes: next });
   };
+
+  const showError = attempts > 0;
+  const bagInvalid = !data.item.bagType;
+  const brandInvalid = !data.item.brand;
+  const areasInvalid = !isLost && data.item.damageAreas.length === 0;
+  const damageInvalid = !isLost && data.item.damageTypes.length === 0;
+
+  const shake = showError ? { animation: "shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97)" } : undefined;
 
   return (
     <motion.div
@@ -64,7 +81,14 @@ export function StepDetails() {
         </p>
       </div>
 
-      <section className="space-y-3 rounded-2xl border border-border bg-surface-raised p-4">
+      <section
+        key={`bag-${attempts}-${bagInvalid || brandInvalid}`}
+        style={showError && (bagInvalid || brandInvalid) ? shake : undefined}
+        className={cn(
+          "space-y-3 rounded-2xl border bg-surface-raised p-4 transition-colors",
+          showError && (bagInvalid || brandInvalid) ? "border-danger/60" : "border-border",
+        )}
+      >
         <div>
           <Label htmlFor="bagType">Bag type</Label>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -74,7 +98,7 @@ export function StepDetails() {
                 type="button"
                 onClick={() => patch("item", { bagType: b })}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-150",
                   data.item.bagType === b
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-surface text-muted-foreground hover:text-foreground",
@@ -84,6 +108,7 @@ export function StepDetails() {
               </button>
             ))}
           </div>
+          {showError && bagInvalid && <p className="mt-1.5 text-[11px] text-danger">Please choose a bag type</p>}
         </div>
 
         <div>
@@ -92,7 +117,10 @@ export function StepDetails() {
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="mt-1.5 flex h-12 w-full items-center justify-between rounded-md border border-input bg-surface-raised px-3 text-sm"
+                className={cn(
+                  "mt-1.5 flex h-12 w-full items-center justify-between rounded-md border bg-surface-raised px-3 text-sm",
+                  showError && brandInvalid ? "border-danger" : "border-input",
+                )}
               >
                 <span className={cn(!data.item.brand && "text-muted-foreground")}>
                   {data.item.brand || "Select brand..."}
@@ -115,12 +143,7 @@ export function StepDetails() {
                           setBrandOpen(false);
                         }}
                       >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            data.item.brand === b ? "opacity-100" : "opacity-0",
-                          )}
-                        />
+                        <Check className={cn("mr-2 h-4 w-4", data.item.brand === b ? "opacity-100" : "opacity-0")} />
                         {b}
                       </CommandItem>
                     ))}
@@ -129,6 +152,7 @@ export function StepDetails() {
               </Command>
             </PopoverContent>
           </Popover>
+          {showError && brandInvalid && <p className="mt-1.5 text-[11px] text-danger">Please select a brand</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -152,9 +176,7 @@ export function StepDetails() {
             >
               <option value="">Select...</option>
               {SIZES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
+                <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
@@ -191,12 +213,29 @@ export function StepDetails() {
 
       {!isLost && (
         <>
-          <section className="space-y-3 rounded-2xl border border-border bg-surface-raised p-4">
+          <section
+            key={`areas-${attempts}-${areasInvalid}`}
+            style={showError && areasInvalid ? shake : undefined}
+            className={cn(
+              "space-y-3 rounded-2xl border bg-surface-raised p-4 transition-colors",
+              showError && areasInvalid ? "border-danger/60" : "border-border",
+            )}
+          >
             <Label>Where is the damage?</Label>
             <SuitcaseDiagram />
+            {showError && areasInvalid && (
+              <ErrorBanner>Tap at least one zone on the bag diagram</ErrorBanner>
+            )}
           </section>
 
-          <section className="space-y-3 rounded-2xl border border-border bg-surface-raised p-4">
+          <section
+            key={`dt-${attempts}-${damageInvalid}`}
+            style={showError && damageInvalid ? shake : undefined}
+            className={cn(
+              "space-y-3 rounded-2xl border bg-surface-raised p-4 transition-colors",
+              showError && damageInvalid ? "border-danger/60" : "border-border",
+            )}
+          >
             <Label>What type of damage?</Label>
             <div className="flex flex-wrap gap-1.5">
               {DAMAGE_TYPES.map((d) => (
@@ -205,7 +244,7 @@ export function StepDetails() {
                   type="button"
                   onClick={() => toggleDamage(d)}
                   className={cn(
-                    "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    "rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-150",
                     data.item.damageTypes.includes(d)
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-surface text-muted-foreground hover:text-foreground",
@@ -215,6 +254,9 @@ export function StepDetails() {
                 </button>
               ))}
             </div>
+            {showError && damageInvalid && (
+              <ErrorBanner>Pick at least one damage type</ErrorBanner>
+            )}
           </section>
         </>
       )}
