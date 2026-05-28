@@ -69,9 +69,9 @@ function ClaimWizardPage() {
           data.item.damageAreas.length > 0 &&
           data.item.damageTypes.length > 0,
         );
-      case 4: return data.evidence.length >= 1 || data.noReceipt;
+      case 4: return true; // photos optional for demo
       case 5:
-        return Boolean(data.passenger.firstName && data.passenger.lastName && data.passenger.email) && data.consent;
+        return data.consent;
       default: return false;
     }
   })();
