@@ -4,12 +4,12 @@ import { useWizard } from "./wizard-context";
 import type { ClaimType } from "@/lib/claims-storage";
 
 const TYPES: { id: ClaimType; title: string; desc: string; emoji: string }[] = [
-  { id: "damaged_suitcase", title: "Damaged suitcase", desc: "The bag itself is damaged", emoji: "🧳" },
-  { id: "damaged_contents", title: "Damaged contents", desc: "Items inside are damaged", emoji: "📦" },
-  { id: "damaged_both", title: "Both damaged", desc: "Bag and contents", emoji: "🧳📦" },
-  { id: "lost_suitcase", title: "Lost suitcase", desc: "The bag never arrived", emoji: "❓" },
-  { id: "lost_contents", title: "Lost contents", desc: "Items missing from bag", emoji: "📭" },
-  { id: "lost_both", title: "Both lost", desc: "Bag and contents missing", emoji: "🚫" },
+  { id: "damaged_suitcase", title: "Damaged suitcase", desc: "The bag itself is cracked, torn, or broken", emoji: "🧳" },
+  { id: "damaged_contents", title: "Damaged contents", desc: "Items inside were broken in transit", emoji: "📦" },
+  { id: "damaged_both", title: "Both damaged", desc: "Bag and items inside are both damaged", emoji: "🧳📦" },
+  { id: "lost_suitcase", title: "Lost suitcase", desc: "The bag never arrived at baggage claim", emoji: "❓" },
+  { id: "lost_contents", title: "Lost contents", desc: "Items are missing from your bag", emoji: "📭" },
+  { id: "lost_both", title: "Both lost", desc: "Bag and contents are both missing", emoji: "🚫" },
 ];
 
 export function StepClaimType() {
@@ -50,9 +50,14 @@ export function StepClaimType() {
               aria-pressed={active}
             >
               {active && (
-                <span className="absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground">
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.2, 1] }}
+                  transition={{ duration: 0.35, type: "spring", stiffness: 260, damping: 16 }}
+                  className="absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground"
+                >
                   <Check className="h-3 w-3" />
-                </span>
+                </motion.span>
               )}
               <div className="text-2xl leading-none">{t.emoji}</div>
               <div>
