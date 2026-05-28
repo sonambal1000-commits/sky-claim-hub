@@ -145,7 +145,10 @@ export function StepEvidence() {
                     <div className="grid h-10 w-10 place-items-center rounded-full bg-primary-light-bg text-primary">
                       <Icon className="h-4 w-4" />
                     </div>
-                    <div className="text-xs font-semibold leading-tight">{slot.label}</div>
+                    <div className="flex items-center gap-1.5 text-xs font-semibold leading-tight">
+                      {slot.label}
+                      <span className="rounded-full bg-muted px-1.5 py-px text-[9px] font-medium uppercase tracking-wider text-muted-foreground">optional</span>
+                    </div>
                     <div className="text-[10px] leading-tight text-muted-foreground">{slot.sub}</div>
                   </div>
                 )}
