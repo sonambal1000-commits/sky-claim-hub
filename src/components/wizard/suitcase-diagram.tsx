@@ -1,13 +1,16 @@
 import { useWizard } from "./wizard-context";
 
-const AREAS = [
-  { id: "top", label: "Top", d: "M40 20 H160 V45 H40 Z" },
-  { id: "front", label: "Front", d: "M40 50 H160 V165 H40 Z" },
-  { id: "handle", label: "Handle", d: "M85 5 H115 V18 H85 Z" },
-  { id: "wheel-l", label: "Wheel (L)", d: "M40 170 H75 V190 H40 Z" },
-  { id: "wheel-r", label: "Wheel (R)", d: "M125 170 H160 V190 H125 Z" },
-  { id: "left", label: "Left side", d: "M28 50 H40 V165 H28 Z" },
-  { id: "right", label: "Right side", d: "M160 50 H172 V165 H160 Z" },
+type Zone = { id: string; label: string; cx: number; cy: number; w: number; h: number };
+
+const ZONES: Zone[] = [
+  { id: "top", label: "Top", cx: 100, cy: 35, w: 110, h: 22 },
+  { id: "front", label: "Front", cx: 100, cy: 105, w: 110, h: 80 },
+  { id: "back", label: "Back", cx: 175, cy: 105, w: 16, h: 80 },
+  { id: "left", label: "Left", cx: 36, cy: 105, w: 16, h: 80 },
+  { id: "right", label: "Right", cx: 164, cy: 105, w: 16, h: 80 },
+  { id: "bottom", label: "Bottom", cx: 100, cy: 170, w: 110, h: 16 },
+  { id: "handle", label: "Handle", cx: 100, cy: 13, w: 40, h: 14 },
+  { id: "wheels", label: "Wheels", cx: 100, cy: 192, w: 110, h: 14 },
 ];
 
 export function SuitcaseDiagram() {
@@ -24,24 +27,42 @@ export function SuitcaseDiagram() {
   return (
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">
-        Tap the area(s) where the damage is. Select all that apply.
+        Tap each zone where the damage is. Select at least one to continue.
       </p>
       <div className="rounded-2xl border border-border bg-surface p-4">
-        <svg viewBox="0 0 200 200" className="mx-auto h-56 w-auto">
-          {AREAS.map((a) => {
-            const isOn = selected.includes(a.id);
+        <svg viewBox="0 0 200 210" className="mx-auto h-64 w-auto">
+          {ZONES.map((z) => {
+            const on = selected.includes(z.id);
             return (
-              <g key={a.id}>
-                <path
-                  d={a.d}
-                  onClick={() => toggle(a.id)}
-                  className="cursor-pointer transition-all"
-                  fill={isOn ? "var(--color-primary)" : "var(--color-surface-raised)"}
-                  fillOpacity={isOn ? 0.9 : 1}
-                  stroke="var(--color-border)"
+              <g
+                key={z.id}
+                onClick={() => toggle(z.id)}
+                className="cursor-pointer"
+                style={{ transition: "all 200ms" }}
+              >
+                <rect
+                  x={z.cx - z.w / 2}
+                  y={z.cy - z.h / 2}
+                  width={z.w}
+                  height={z.h}
+                  rx={6}
+                  fill={on ? "var(--color-primary)" : "var(--color-surface-raised)"}
+                  fillOpacity={on ? 0.92 : 1}
+                  stroke={on ? "var(--color-primary)" : "var(--color-border)"}
                   strokeWidth="1.5"
                 />
-                <title>{a.label}</title>
+                <text
+                  x={z.cx}
+                  y={z.cy + 3.5}
+                  textAnchor="middle"
+                  fontSize="9"
+                  fontWeight="600"
+                  fill={on ? "var(--color-primary-foreground)" : "var(--color-muted-foreground)"}
+                  style={{ pointerEvents: "none", userSelect: "none" }}
+                >
+                  {z.label}
+                </text>
+                <title>{z.label}</title>
               </g>
             );
           })}
@@ -50,13 +71,13 @@ export function SuitcaseDiagram() {
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {selected.map((id) => {
-            const a = AREAS.find((x) => x.id === id);
+            const z = ZONES.find((x) => x.id === id);
             return (
               <span
                 key={id}
                 className="inline-flex items-center rounded-full bg-primary-light-bg px-2.5 py-1 text-xs font-medium text-primary"
               >
-                {a?.label}
+                {z?.label}
               </span>
             );
           })}

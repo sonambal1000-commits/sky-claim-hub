@@ -4,18 +4,20 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useWizard } from "./wizard-context";
 
 export function StepFlight() {
   const { data, patch } = useWizard();
   const [looking, setLooking] = useState(false);
-  const [found, setFound] = useState(false);
+  const [found, setFound] = useState(Boolean(data.flight.flightNo));
 
   const refValid = /^[A-Z0-9]{6}$/i.test(data.flight.bookingRef);
 
   const lookup = () => {
     if (!refValid) return;
     setLooking(true);
+    setFound(false);
     setTimeout(() => {
       patch("flight", {
         flightNo: "U2 8472",
@@ -25,7 +27,7 @@ export function StepFlight() {
       });
       setLooking(false);
       setFound(true);
-    }, 900);
+    }, 2000);
   };
 
   return (
@@ -54,9 +56,7 @@ export function StepFlight() {
                 id="bref"
                 placeholder="e.g. K9R2XQ"
                 value={data.flight.bookingRef}
-                onChange={(e) =>
-                  patch("flight", { bookingRef: e.target.value.toUpperCase() })
-                }
+                onChange={(e) => patch("flight", { bookingRef: e.target.value.toUpperCase() })}
                 maxLength={8}
                 className="h-12 pr-10 text-base font-mono tracking-widest uppercase"
                 inputMode="text"
@@ -91,7 +91,20 @@ export function StepFlight() {
             )}
           </Button>
 
-          {found && (
+          {looking && (
+            <div className="rounded-2xl border border-border bg-surface-raised p-4">
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="mt-3 h-5 w-32" />
+              <div className="mt-2 flex items-center gap-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-3 rounded-full" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+              <Skeleton className="mt-2 h-3 w-24" />
+            </div>
+          )}
+
+          {found && !looking && (
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -101,9 +114,7 @@ export function StepFlight() {
                 <Plane className="h-3.5 w-3.5" />
                 Flight found
               </div>
-              <div className="mt-2 font-display text-lg font-semibold">
-                {data.flight.flightNo}
-              </div>
+              <div className="mt-2 font-display text-lg font-semibold">{data.flight.flightNo}</div>
               <div className="mt-1 flex items-center gap-2 text-sm text-foreground">
                 <span>{data.flight.from}</span>
                 <Plane className="h-3.5 w-3.5 rotate-90 text-muted-foreground" />
@@ -125,44 +136,26 @@ export function StepFlight() {
         <div className="space-y-3">
           <div>
             <Label htmlFor="fno">Flight number</Label>
-            <Input
-              id="fno"
-              placeholder="U2 8472"
-              value={data.flight.flightNo}
+            <Input id="fno" placeholder="U2 8472" value={data.flight.flightNo}
               onChange={(e) => patch("flight", { flightNo: e.target.value })}
-              className="mt-1.5 h-12"
-            />
+              className="mt-1.5 h-12" />
           </div>
           <div>
             <Label htmlFor="fdate">Date of flight</Label>
-            <Input
-              id="fdate"
-              type="date"
-              value={data.flight.date}
+            <Input id="fdate" type="date" value={data.flight.date}
               onChange={(e) => patch("flight", { date: e.target.value })}
-              className="mt-1.5 h-12"
-            />
+              className="mt-1.5 h-12" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="ffrom">From</Label>
-              <Input
-                id="ffrom"
-                placeholder="LGW"
-                value={data.flight.from}
-                onChange={(e) => patch("flight", { from: e.target.value })}
-                className="mt-1.5 h-12"
-              />
+              <Input id="ffrom" placeholder="LGW" value={data.flight.from}
+                onChange={(e) => patch("flight", { from: e.target.value })} className="mt-1.5 h-12" />
             </div>
             <div>
               <Label htmlFor="fto">To</Label>
-              <Input
-                id="fto"
-                placeholder="PMI"
-                value={data.flight.to}
-                onChange={(e) => patch("flight", { to: e.target.value })}
-                className="mt-1.5 h-12"
-              />
+              <Input id="fto" placeholder="PMI" value={data.flight.to}
+                onChange={(e) => patch("flight", { to: e.target.value })} className="mt-1.5 h-12" />
             </div>
           </div>
           <button
@@ -176,21 +169,10 @@ export function StepFlight() {
       )}
 
       <div className="border-t border-border pt-4">
-        <Label htmlFor="pir" className="text-xs uppercase tracking-wider text-muted-foreground">
-          Optional
-        </Label>
-        <div className="mt-1.5">
-          <Label htmlFor="pir">PIR reference (if reported at airport)</Label>
-          <Input
-            id="pir"
-            placeholder="LHRBA12345"
-            value={data.flight.pir}
-            onChange={(e) =>
-              patch("flight", { pir: e.target.value.toUpperCase() })
-            }
-            className="mt-1.5 h-12 font-mono uppercase"
-          />
-        </div>
+        <Label htmlFor="pir">PIR reference (if reported at airport) — optional</Label>
+        <Input id="pir" placeholder="LHRBA12345" value={data.flight.pir}
+          onChange={(e) => patch("flight", { pir: e.target.value.toUpperCase() })}
+          className="mt-1.5 h-12 font-mono uppercase" />
       </div>
     </motion.div>
   );

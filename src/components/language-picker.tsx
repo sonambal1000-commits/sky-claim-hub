@@ -1,25 +1,15 @@
 import { Globe } from "lucide-react";
-import { useState } from "react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-const LANGUAGES = [
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "es", label: "Español", flag: "🇪🇸" },
-  { code: "fr", label: "Français", flag: "🇫🇷" },
-  { code: "de", label: "Deutsch", flag: "🇩🇪" },
-  { code: "it", label: "Italiano", flag: "🇮🇹" },
-  { code: "pl", label: "Polski", flag: "🇵🇱" },
-  { code: "hu", label: "Magyar", flag: "🇭🇺" },
-  { code: "nl", label: "Nederlands", flag: "🇳🇱" },
-];
+import { LANGUAGES, useI18n } from "@/lib/i18n";
 
 export function LanguagePicker() {
-  const [lang, setLang] = useState("en");
+  const { lang, setLang } = useI18n();
   const current = LANGUAGES.find((l) => l.code === lang) ?? LANGUAGES[0];
 
   return (
@@ -36,7 +26,10 @@ export function LanguagePicker() {
         {LANGUAGES.map((l) => (
           <DropdownMenuItem
             key={l.code}
-            onClick={() => setLang(l.code)}
+            onClick={() => {
+              setLang(l.code);
+              toast.info(`Language: ${l.label}`);
+            }}
             className="cursor-pointer gap-2"
           >
             <span>{l.flag}</span>

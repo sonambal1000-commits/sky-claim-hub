@@ -10,13 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as AirlineRouteImport } from './routes/airline'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrackClaimIdRouteImport } from './routes/track.$claimId'
+import { Route as StaffLoginRouteImport } from './routes/staff.login'
+import { Route as StaffDashboardRouteImport } from './routes/staff.dashboard'
 import { Route as ClaimNewRouteImport } from './routes/claim.new'
 
 const TrackRoute = TrackRouteImport.update({
   id: '/track',
   path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AirlineRoute = AirlineRouteImport.update({
+  id: '/airline',
+  path: '/airline',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +37,16 @@ const TrackClaimIdRoute = TrackClaimIdRouteImport.update({
   path: '/$claimId',
   getParentRoute: () => TrackRoute,
 } as any)
+const StaffLoginRoute = StaffLoginRouteImport.update({
+  id: '/staff/login',
+  path: '/staff/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffDashboardRoute = StaffDashboardRouteImport.update({
+  id: '/staff/dashboard',
+  path: '/staff/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClaimNewRoute = ClaimNewRouteImport.update({
   id: '/claim/new',
   path: '/claim/new',
@@ -37,35 +55,69 @@ const ClaimNewRoute = ClaimNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/airline': typeof AirlineRoute
   '/track': typeof TrackRouteWithChildren
   '/claim/new': typeof ClaimNewRoute
+  '/staff/dashboard': typeof StaffDashboardRoute
+  '/staff/login': typeof StaffLoginRoute
   '/track/$claimId': typeof TrackClaimIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/airline': typeof AirlineRoute
   '/track': typeof TrackRouteWithChildren
   '/claim/new': typeof ClaimNewRoute
+  '/staff/dashboard': typeof StaffDashboardRoute
+  '/staff/login': typeof StaffLoginRoute
   '/track/$claimId': typeof TrackClaimIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/airline': typeof AirlineRoute
   '/track': typeof TrackRouteWithChildren
   '/claim/new': typeof ClaimNewRoute
+  '/staff/dashboard': typeof StaffDashboardRoute
+  '/staff/login': typeof StaffLoginRoute
   '/track/$claimId': typeof TrackClaimIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/track' | '/claim/new' | '/track/$claimId'
+  fullPaths:
+    | '/'
+    | '/airline'
+    | '/track'
+    | '/claim/new'
+    | '/staff/dashboard'
+    | '/staff/login'
+    | '/track/$claimId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/track' | '/claim/new' | '/track/$claimId'
-  id: '__root__' | '/' | '/track' | '/claim/new' | '/track/$claimId'
+  to:
+    | '/'
+    | '/airline'
+    | '/track'
+    | '/claim/new'
+    | '/staff/dashboard'
+    | '/staff/login'
+    | '/track/$claimId'
+  id:
+    | '__root__'
+    | '/'
+    | '/airline'
+    | '/track'
+    | '/claim/new'
+    | '/staff/dashboard'
+    | '/staff/login'
+    | '/track/$claimId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AirlineRoute: typeof AirlineRoute
   TrackRoute: typeof TrackRouteWithChildren
   ClaimNewRoute: typeof ClaimNewRoute
+  StaffDashboardRoute: typeof StaffDashboardRoute
+  StaffLoginRoute: typeof StaffLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,6 +127,13 @@ declare module '@tanstack/react-router' {
       path: '/track'
       fullPath: '/track'
       preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/airline': {
+      id: '/airline'
+      path: '/airline'
+      fullPath: '/airline'
+      preLoaderRoute: typeof AirlineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -90,6 +149,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/track/$claimId'
       preLoaderRoute: typeof TrackClaimIdRouteImport
       parentRoute: typeof TrackRoute
+    }
+    '/staff/login': {
+      id: '/staff/login'
+      path: '/staff/login'
+      fullPath: '/staff/login'
+      preLoaderRoute: typeof StaffLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff/dashboard': {
+      id: '/staff/dashboard'
+      path: '/staff/dashboard'
+      fullPath: '/staff/dashboard'
+      preLoaderRoute: typeof StaffDashboardRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/claim/new': {
       id: '/claim/new'
@@ -113,19 +186,12 @@ const TrackRouteWithChildren = TrackRoute._addFileChildren(TrackRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AirlineRoute: AirlineRoute,
   TrackRoute: TrackRouteWithChildren,
   ClaimNewRoute: ClaimNewRoute,
+  StaffDashboardRoute: StaffDashboardRoute,
+  StaffLoginRoute: StaffLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

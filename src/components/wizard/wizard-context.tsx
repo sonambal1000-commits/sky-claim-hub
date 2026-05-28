@@ -25,6 +25,8 @@ export type WizardData = {
     description: string;
   };
   evidence: { name: string; preview: string }[];
+  noReceipt: boolean;
+  purchaseDate: string;
   consent: boolean;
 };
 
@@ -44,6 +46,8 @@ const initial: WizardData = {
     description: "",
   },
   evidence: [],
+  noReceipt: false,
+  purchaseDate: "",
   consent: false,
 };
 
@@ -54,6 +58,8 @@ type Ctx = {
   update: <K extends keyof WizardData>(key: K, value: WizardData[K]) => void;
   patch: <K extends keyof WizardData>(key: K, partial: Partial<WizardData[K]>) => void;
   reset: () => void;
+  attempts: number;
+  bumpAttempts: () => void;
 };
 
 const WizardCtx = createContext<Ctx | null>(null);
@@ -61,6 +67,7 @@ const WizardCtx = createContext<Ctx | null>(null);
 export function WizardProvider({ children }: { children: ReactNode }) {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<WizardData>(initial);
+  const [attempts, setAttempts] = useState(0);
 
   const update: Ctx["update"] = (key, value) => setData((d) => ({ ...d, [key]: value }));
   const patch: Ctx["patch"] = (key, partial) =>
@@ -68,10 +75,12 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const reset = () => {
     setData(initial);
     setStep(1);
+    setAttempts(0);
   };
+  const bumpAttempts = () => setAttempts((a) => a + 1);
 
   return (
-    <WizardCtx.Provider value={{ step, setStep, data, update, patch, reset }}>
+    <WizardCtx.Provider value={{ step, setStep, data, update, patch, reset, attempts, bumpAttempts }}>
       {children}
     </WizardCtx.Provider>
   );
@@ -86,7 +95,7 @@ export function useWizard() {
 export const STEPS = [
   { n: 1, label: "Flight" },
   { n: 2, label: "Claim type" },
-  { n: 3, label: "Details" },
-  { n: 4, label: "Evidence" },
+  { n: 3, label: "Bag details" },
+  { n: 4, label: "Photos" },
   { n: 5, label: "Review" },
 ];
