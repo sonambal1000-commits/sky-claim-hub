@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import {
-  DEMO_CLAIMS, STATUS_TONE, TRANSITIONS, slaTone, formatSla,
-  type DemoClaim, type StaffStatus,
+  DEMO_CLAIMS, STATUS_TONE, TRANSITIONS, slaTone, formatSla, AIRLINE_META,
+  type DemoClaim, type StaffStatus, type AirlineName,
 } from "@/lib/demo-data";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
