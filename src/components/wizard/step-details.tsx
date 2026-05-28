@@ -221,7 +221,10 @@ export function StepDetails() {
               showError && areasInvalid ? "border-danger/60" : "border-border",
             )}
           >
-            <Label>Where is the damage?</Label>
+            <div>
+              <Label>Mark the damaged areas</Label>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">Tap directly on the suitcase to mark where it's damaged</p>
+            </div>
             <SuitcaseDiagram />
             {showError && areasInvalid && (
               <ErrorBanner>Tap at least one zone on the bag diagram</ErrorBanner>

@@ -1,7 +1,9 @@
-import { Check } from "lucide-react";
+import { Check, Plane, FileQuestion, Luggage, Camera, CheckCircle, type LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { STEPS, useWizard } from "./wizard-context";
 import { useI18n } from "@/lib/i18n";
+
+const STEP_ICONS: LucideIcon[] = [Plane, FileQuestion, Luggage, Camera, CheckCircle];
 
 export function StepProgress() {
   const { step } = useWizard();
@@ -27,22 +29,23 @@ export function StepProgress() {
         {STEPS.map((s, i) => {
           const done = s.n < step;
           const active = s.n === step;
+          const Icon = STEP_ICONS[i];
           return (
             <li key={s.n} className="flex flex-1 flex-col items-center gap-1">
               <motion.div
                 animate={done ? { scale: [1, 1.25, 1] } : { scale: 1 }}
                 transition={{ duration: 0.35 }}
                 className={[
-                  "grid h-6 w-6 place-items-center rounded-full text-[10px] font-semibold transition-all",
+                  "grid h-7 w-7 place-items-center rounded-full text-[10px] font-semibold transition-all",
                   done && "bg-success text-success-foreground",
-                  active && "ring-2 ring-primary ring-offset-2 ring-offset-background bg-surface-raised text-primary",
+                  active && "ring-2 ring-primary ring-offset-2 ring-offset-background bg-primary text-primary-foreground",
                   !done && !active && "bg-secondary text-muted-foreground",
                 ]
                   .filter(Boolean)
                   .join(" ")}
                 aria-current={active ? "step" : undefined}
               >
-                {done ? <Check className="h-3 w-3" /> : s.n}
+                {done ? <Check className="h-3.5 w-3.5" strokeWidth={1.5} /> : <Icon className="h-3.5 w-3.5" strokeWidth={1.5} />}
               </motion.div>
               <span
                 className={[
