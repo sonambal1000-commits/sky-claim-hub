@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
   Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -10,6 +10,7 @@ import {
 import { toast } from "sonner";
 import { AppHeader } from "@/components/app-header";
 import { DEMO_CLAIMS, slaTone, formatSla } from "@/lib/demo-data";
+import { useTenant } from "@/components/tenant-provider";
 import { AirlinePill, StatusPill } from "./staff.dashboard";
 
 export const Route = createFileRoute("/airline")({
