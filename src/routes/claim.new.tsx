@@ -184,23 +184,23 @@ function ClaimWizardPage() {
             <button
               type="button"
               onClick={submit}
-              disabled={submitting}
+              disabled={submitting || !canAdvance}
               className={[
                 "inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition-all active:scale-[0.98] disabled:cursor-not-allowed",
-                canAdvance
+                canAdvance && !submitting
                   ? "gradient-primary text-primary-foreground shadow-[var(--shadow-elegant)]"
                   : "bg-secondary text-muted-foreground",
               ].join(" ")}
             >
               {submitting ? (
                 <>
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Submitting…
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-4 w-4" />
-                  {t("submit")}
+                  Submit my claim
+                  <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
