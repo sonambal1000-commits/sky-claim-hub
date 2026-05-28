@@ -1,15 +1,15 @@
 import { motion } from "motion/react";
-import { Check } from "lucide-react";
+import { Check, Luggage, PackageOpen, PackageX, CircleHelp, Package, Ban, type LucideIcon } from "lucide-react";
 import { useWizard } from "./wizard-context";
 import type { ClaimType } from "@/lib/claims-storage";
 
-const TYPES: { id: ClaimType; title: string; desc: string; emoji: string }[] = [
-  { id: "damaged_suitcase", title: "Damaged suitcase", desc: "The bag itself is cracked, torn, or broken", emoji: "🧳" },
-  { id: "damaged_contents", title: "Damaged contents", desc: "Items inside were broken in transit", emoji: "📦" },
-  { id: "damaged_both", title: "Both damaged", desc: "Bag and items inside are both damaged", emoji: "🧳📦" },
-  { id: "lost_suitcase", title: "Lost suitcase", desc: "The bag never arrived at baggage claim", emoji: "❓" },
-  { id: "lost_contents", title: "Lost contents", desc: "Items are missing from your bag", emoji: "📭" },
-  { id: "lost_both", title: "Both lost", desc: "Bag and contents are both missing", emoji: "🚫" },
+const TYPES: { id: ClaimType; title: string; desc: string; icon: LucideIcon }[] = [
+  { id: "damaged_suitcase", title: "Damaged suitcase", desc: "The bag itself is cracked, torn, or broken", icon: Luggage },
+  { id: "damaged_contents", title: "Damaged contents", desc: "Items inside were broken in transit", icon: PackageOpen },
+  { id: "damaged_both", title: "Both damaged", desc: "Bag and items inside are both damaged", icon: PackageX },
+  { id: "lost_suitcase", title: "Lost suitcase", desc: "The bag never arrived at baggage claim", icon: CircleHelp },
+  { id: "lost_contents", title: "Lost contents", desc: "Items are missing from your bag", icon: Package },
+  { id: "lost_both", title: "Both lost", desc: "Bag and contents are both missing", icon: Ban },
 ];
 
 export function StepClaimType() {
@@ -35,14 +35,15 @@ export function StepClaimType() {
       <div className="grid grid-cols-2 gap-2.5">
         {TYPES.map((t) => {
           const active = data.type === t.id;
+          const Icon = t.icon;
           return (
             <button
               key={t.id}
               type="button"
               onClick={() => update("type", t.id)}
               className={[
-                "group relative flex flex-col items-start gap-2 rounded-2xl border p-3.5 text-left transition-all",
-                "min-h-[132px]",
+                "group relative flex flex-col items-start gap-3 rounded-2xl border p-3.5 text-left transition-all",
+                "min-h-[148px]",
                 active
                   ? "border-primary bg-primary-light-bg shadow-[var(--shadow-elegant)]"
                   : "border-border bg-surface-raised hover:border-primary/40 hover:bg-surface",
@@ -59,7 +60,14 @@ export function StepClaimType() {
                   <Check className="h-3 w-3" />
                 </motion.span>
               )}
-              <div className="text-2xl leading-none">{t.emoji}</div>
+              <div
+                className={[
+                  "grid h-12 w-12 place-items-center rounded-xl transition-colors",
+                  active ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
+                ].join(" ")}
+              >
+                <Icon className="h-6 w-6" strokeWidth={1.5} />
+              </div>
               <div>
                 <div className="text-sm font-semibold leading-tight">{t.title}</div>
                 <div className="mt-1 text-[11px] leading-snug text-muted-foreground">
