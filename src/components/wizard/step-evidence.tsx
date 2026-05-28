@@ -65,7 +65,7 @@ export function StepEvidence() {
           Add your photos
         </h2>
         <p className="text-sm text-muted-foreground text-pretty">
-          Four photos help us decide your claim faster. Tap to use your camera.
+          Photos help us decide your claim faster — but they're <span className="font-semibold text-foreground">optional</span>. You can submit without them and add later.
         </p>
       </div>
 
