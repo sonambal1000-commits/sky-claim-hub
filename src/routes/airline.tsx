@@ -39,11 +39,20 @@ const BY_TYPE = [
 
 function AirlinePage() {
   const [openApi, setOpenApi] = useState(false);
+  const { tenant, tenantInfo, setTenant } = useTenant();
+
+  // Default to easyJet view on first load
+  useEffect(() => {
+    if (tenant === "eagle") setTenant("easyjet");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const copyApi = () => {
     navigator.clipboard.writeText(`GET https://api.eagleclaims.io/v1/claims\nAuthorization: Bearer <token>`);
     toast.info("API snippet copied");
   };
+
+  const displayName = tenant === "eagle" ? "easyJet" : tenantInfo.name;
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,6 +60,9 @@ function AirlinePage() {
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 md:px-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              {displayName} · Powered by Eagle Claims
+            </div>
             <h1 className="font-display text-2xl font-semibold tracking-tight">Airline operations</h1>
             <p className="text-sm text-muted-foreground">Live view of your claims activity, powered by Eagle.</p>
           </div>
