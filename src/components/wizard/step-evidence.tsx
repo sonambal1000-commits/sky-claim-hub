@@ -1,15 +1,15 @@
 import { motion } from "motion/react";
-import { Camera, Plus, Trash2, Receipt, Package, Tag, ImageIcon, Search } from "lucide-react";
+import { Camera, Plus, Trash2, Receipt, Luggage, Tag, ImageIcon, ZoomIn, type LucideIcon } from "lucide-react";
 import { useRef } from "react";
 import { useWizard } from "./wizard-context";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-type Slot = { key: string; label: string; sub: string; icon: typeof Camera };
+type Slot = { key: string; label: string; sub: string; icon: LucideIcon };
 
 const SLOTS: Slot[] = [
-  { key: "exterior", label: "Full bag exterior", sub: "Show the whole bag", icon: Package },
-  { key: "damage", label: "Close-up of damage", sub: "Focus on the issue", icon: Search },
+  { key: "exterior", label: "Full bag exterior", sub: "Show the whole bag", icon: Luggage },
+  { key: "damage", label: "Close-up of damage", sub: "Focus on the issue", icon: ZoomIn },
   { key: "tag", label: "Baggage tag", sub: "Airline barcode tag", icon: Tag },
   { key: "receipt", label: "Purchase receipt", sub: "Or approx. purchase date", icon: Receipt },
 ];

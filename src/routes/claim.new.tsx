@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Copy, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Copy, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
@@ -380,7 +380,7 @@ function SuccessView({ ref_, id: _id }: { ref_: string; id: string }) {
           transition={{ delay: 0.7 }}
           className="mt-5 rounded-xl bg-muted/70 p-3.5 text-xs text-foreground"
         >
-          📧 We'll send updates to your email address. You can also track your claim anytime.
+          <span className="inline-flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-primary" strokeWidth={1.5} /> We'll send updates to your email address. You can also track your claim anytime.</span>
         </motion.div>
 
         {/* CTAs */}

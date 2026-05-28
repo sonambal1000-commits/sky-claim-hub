@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { ArrowRight, Search, ShieldCheck, Sparkles, Clock } from "lucide-react";
+import { ArrowRight, Search, ShieldCheck, Sparkles, Timer, Languages } from "lucide-react";
 import { AppHeader } from "@/components/app-header";
 import { useI18n } from "@/lib/i18n";
 
@@ -70,9 +70,9 @@ function LandingPage() {
 
         <section className="mt-6 grid grid-cols-3 gap-2">
           {[
-            { icon: Clock, label: "3 min", sub: "to file" },
+            { icon: Timer, label: "3 min", sub: "to file" },
             { icon: ShieldCheck, label: "Secure", sub: "GDPR-grade" },
-            { icon: Sparkles, label: "8 langs", sub: "supported" },
+            { icon: Languages, label: "8 langs", sub: "supported" },
           ].map(({ icon: Icon, label, sub }) => (
             <div key={label} className="rounded-2xl border border-border bg-surface-raised p-3.5 text-center">
               <Icon className="mx-auto h-4 w-4 text-primary" />
