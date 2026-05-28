@@ -69,9 +69,9 @@ function ClaimWizardPage() {
           data.item.damageAreas.length > 0 &&
           data.item.damageTypes.length > 0,
         );
-      case 4: return data.evidence.length >= 1 || data.noReceipt;
+      case 4: return true; // photos optional for demo
       case 5:
-        return Boolean(data.passenger.firstName && data.passenger.lastName && data.passenger.email) && data.consent;
+        return data.consent;
       default: return false;
     }
   })();
@@ -184,23 +184,23 @@ function ClaimWizardPage() {
             <button
               type="button"
               onClick={submit}
-              disabled={submitting}
+              disabled={submitting || !canAdvance}
               className={[
                 "inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition-all active:scale-[0.98] disabled:cursor-not-allowed",
-                canAdvance
+                canAdvance && !submitting
                   ? "gradient-primary text-primary-foreground shadow-[var(--shadow-elegant)]"
                   : "bg-secondary text-muted-foreground",
               ].join(" ")}
             >
               {submitting ? (
                 <>
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Submitting…
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-4 w-4" />
-                  {t("submit")}
+                  Submit my claim
+                  <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
@@ -211,58 +211,127 @@ function ClaimWizardPage() {
   );
 }
 
-function SuccessView({ ref_, id }: { ref_: string; id: string }) {
+function ConfettiBurst() {
+  // 48 absolutely-positioned particles raining from top with randomised x drift, colour, size, delay
+  const colors = ["var(--color-primary)", "#FFD700", "#ffffff", "var(--color-primary-dark)"];
+  const particles = Array.from({ length: 48 }, (_, i) => {
+    const left = Math.random() * 100;
+    const cx = (Math.random() * 200 - 100).toFixed(0) + "px";
+    const delay = (Math.random() * 0.6).toFixed(2);
+    const duration = (2 + Math.random() * 1.5).toFixed(2);
+    const size = 6 + Math.round(Math.random() * 8);
+    const color = colors[i % colors.length];
+    const round = Math.random() > 0.5;
+    return (
+      <span
+        key={i}
+        className="pointer-events-none absolute top-0 block"
+        style={{
+          left: `${left}%`,
+          width: `${size}px`,
+          height: `${size}px`,
+          background: color,
+          borderRadius: round ? "9999px" : "1px",
+          // @ts-expect-error custom property
+          "--cx": cx,
+          animation: `confetti-fall ${duration}s cubic-bezier(0.2, 0.6, 0.4, 1) ${delay}s forwards`,
+        }}
+      />
+    );
+  });
+  return <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">{particles}</div>;
+}
+
+function AnimatedCheckmark() {
+  return (
+    <motion.div
+      initial={{ scale: 0.4, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 16 }}
+      className="relative mx-auto h-28 w-28"
+    >
+      <span className="absolute inset-0 animate-[pulse-dot_2.4s_ease-in-out_infinite] rounded-full bg-success/30" />
+      <div className="relative grid h-full w-full place-items-center rounded-full bg-success text-success-foreground shadow-[var(--shadow-elegant)]">
+        <svg viewBox="0 0 52 52" className="h-14 w-14">
+          <circle cx="26" cy="26" r="24" fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" />
+          <path
+            d="M14 27 L23 36 L39 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              strokeDasharray: 60,
+              strokeDashoffset: 60,
+              animation: "draw-check 0.6s 0.25s cubic-bezier(0.65, 0, 0.45, 1) forwards",
+            }}
+          />
+        </svg>
+      </div>
+    </motion.div>
+  );
+}
+
+function SuccessView({ ref_, id: _id }: { ref_: string; id: string }) {
+  const [copied, setCopied] = useState(false);
   const steps = ["Submitted", "Under Review", "Decision", "Completed"];
-  const current = 0;
+  const currentIdx = 0; // "Submitted" is done; next-up shown as locked grey
 
   const copy = async () => {
     await navigator.clipboard.writeText(ref_);
-    toast.info("Reference copied");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="relative min-h-screen bg-background"
+    >
+      <ConfettiBurst />
       <AppHeader />
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <motion.div
-          initial={{ scale: 0.6, opacity: 0 }}
-          animate={{ scale: [0.6, 1.2, 1], opacity: 1 }}
-          transition={{ duration: 0.5, type: "spring", stiffness: 220, damping: 16 }}
-          className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-success text-success-foreground shadow-[var(--shadow-elegant)]"
-        >
-          <CheckCircle2 className="h-12 w-12" />
-        </motion.div>
+      <main className="mx-auto max-w-2xl px-4 py-10">
+        <AnimatedCheckmark />
 
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="mt-5 text-center"
+          transition={{ delay: 0.4 }}
+          className="mt-6 text-center"
         >
-          <h1 className="font-display text-2xl font-semibold tracking-tight">Claim submitted!</h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            You'll get an email update within 24 hours.
+          <h1 className="font-display text-3xl font-bold tracking-tight">Claim submitted!</h1>
+          <p className="mt-2 text-sm text-muted-foreground text-pretty">
+            We've received your claim and will be in touch within 48 hours.
           </p>
         </motion.div>
 
+        {/* Reference badge */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="mt-6 rounded-2xl border border-border bg-surface-raised p-4"
+          transition={{ delay: 0.5 }}
+          className="mt-6 flex justify-center"
         >
-          <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-            Your claim reference
-          </div>
-          <div className="mt-1 flex items-center justify-between gap-3">
-            <div className="font-mono text-xl font-semibold tracking-wide text-primary">{ref_}</div>
-            <button
-              onClick={copy}
-              className="grid h-9 w-9 place-items-center rounded-full bg-primary-light-bg text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
-              aria-label="Copy reference"
-            >
-              <Copy className="h-4 w-4" />
-            </button>
+          <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-raised px-3 py-2 shadow-[var(--shadow-raised)]">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">REF</span>
+            <code className="font-mono text-sm font-bold tracking-wider text-primary">{ref_}</code>
+            <div className="relative">
+              <button
+                onClick={copy}
+                className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-primary-light-bg hover:text-primary"
+                aria-label="Copy reference"
+              >
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+              {copied && (
+                <span className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 rounded-md bg-foreground px-2 py-0.5 text-[10px] font-semibold text-background shadow-md">
+                  Copied!
+                </span>
+              )}
+            </div>
           </div>
         </motion.div>
 
@@ -270,56 +339,73 @@ function SuccessView({ ref_, id }: { ref_: string; id: string }) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.45 }}
-          className="mt-6 rounded-2xl border border-border bg-surface-raised p-4"
+          transition={{ delay: 0.6 }}
+          className="mt-8 rounded-2xl border border-border bg-surface-raised p-5"
         >
-          <div className="grid grid-cols-4 gap-2">
-            {steps.map((label, i) => {
-              const done = i < current;
-              const active = i === current;
-              return (
-                <div key={label} className="flex flex-col items-center text-center">
-                  <div
-                    className={[
-                      "grid h-9 w-9 place-items-center rounded-full text-[11px] font-semibold",
-                      done && "bg-success text-success-foreground",
-                      active && "gradient-primary text-primary-foreground",
-                      !done && !active && "bg-secondary text-muted-foreground",
-                    ].filter(Boolean).join(" ")}
-                  >
-                    {done ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
+          <div className="relative">
+            {/* Connector line */}
+            <div className="absolute left-[12.5%] right-[12.5%] top-5 h-0.5 bg-border" />
+            <div className="absolute left-[12.5%] top-5 h-0.5 bg-primary" style={{ width: "calc((100% - 25%) * 0.16)" }} />
+            <div className="relative grid grid-cols-4">
+              {steps.map((label, i) => {
+                const done = i <= currentIdx;
+                const active = i === currentIdx;
+                return (
+                  <div key={label} className="flex flex-col items-center text-center">
+                    <div
+                      className={[
+                        "relative grid h-10 w-10 place-items-center rounded-full text-[11px] font-semibold",
+                        done ? "gradient-primary text-primary-foreground" : "border-2 border-border bg-surface-raised text-muted-foreground",
+                      ].join(" ")}
+                    >
+                      {active && (
+                        <span className="absolute inset-0 animate-[pulse-dot_2s_ease-in-out_infinite] rounded-full bg-primary/30" />
+                      )}
+                      {done ? <CheckCircle2 className="relative h-5 w-5" /> : <span className="relative">{i + 1}</span>}
+                    </div>
+                    <div className={["mt-2 text-[11px] font-semibold leading-tight", done ? "text-primary" : "text-muted-foreground"].join(" ")}>
+                      {label}
+                    </div>
                   </div>
-                  <div className={["mt-1.5 text-[10px] font-semibold leading-tight", active ? "text-primary" : "text-muted-foreground"].join(" ")}>
-                    {label}
-                  </div>
-                  {active && (
-                    <span className="relative mt-1 flex h-1.5 w-1.5">
-                      <span className="absolute inline-flex h-full w-full animate-[pulse-dot_1.8s_ease-in-out_infinite] rounded-full bg-primary opacity-60" />
-                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
-                    </span>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </motion.div>
 
-        <div className="mt-8 flex flex-col gap-2">
+        {/* Info box */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mt-5 rounded-xl bg-muted/70 p-3.5 text-xs text-foreground"
+        >
+          📧 We'll send updates to your email address. You can also track your claim anytime.
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-6 flex flex-col gap-2 sm:flex-row"
+        >
           <Link
             to="/track/$claimId"
-            params={{ claimId: id }}
-            className="inline-flex h-12 items-center justify-center rounded-xl gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)]"
+            params={{ claimId: ref_ }}
+            className="inline-flex h-12 flex-1 items-center justify-center gap-1.5 rounded-xl gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-transform active:scale-[0.98]"
           >
-            Track your claim
+            Track my claim
+            <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/"
-            className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-surface-raised text-sm font-medium text-foreground"
+            className="inline-flex h-12 flex-1 items-center justify-center rounded-xl border border-border bg-surface-raised text-sm font-medium text-foreground transition-colors hover:bg-surface"
           >
-            Done
+            Back to home
           </Link>
-        </div>
+        </motion.div>
       </main>
-    </div>
+    </motion.div>
   );
 }

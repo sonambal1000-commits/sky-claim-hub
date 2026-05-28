@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import {
-  DEMO_CLAIMS, STATUS_TONE, TRANSITIONS, slaTone, formatSla,
-  type DemoClaim, type StaffStatus,
+  DEMO_CLAIMS, STATUS_TONE, TRANSITIONS, slaTone, formatSla, AIRLINE_META,
+  type DemoClaim, type StaffStatus, type AirlineName,
 } from "@/lib/demo-data";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -209,11 +209,17 @@ function EmptyState() {
   );
 }
 
-export function AirlinePill({ name }: { name: "easyJet" | "Skybridge" }) {
-  const c = name === "easyJet"
-    ? "bg-orange-500/15 text-orange-600 dark:text-orange-300"
-    : "bg-indigo-500/15 text-indigo-600 dark:text-indigo-300";
-  return <span className={["inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold", c].join(" ")}>{name}</span>;
+export function AirlinePill({ name }: { name: AirlineName }) {
+  const meta = AIRLINE_META[name];
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white"
+      style={{ background: meta.color }}
+    >
+      {name}
+      <span className="font-mono text-[9px] opacity-80">{meta.iata}</span>
+    </span>
+  );
 }
 
 export function StatusPill({ status }: { status: StaffStatus }) {

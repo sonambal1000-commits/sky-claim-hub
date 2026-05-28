@@ -21,8 +21,7 @@ function TrackPage() {
 
   const search = (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo: any reference looks up the demo claim
-    const id = ref.trim() ? `demo-${ref.trim().toUpperCase()}` : "demo-EC-260527-4821";
+    const id = ref.trim() ? ref.trim().toUpperCase() : "EC-260527-4821";
     navigate({ to: "/track/$claimId", params: { claimId: id } });
   };
 

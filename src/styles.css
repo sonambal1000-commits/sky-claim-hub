@@ -136,27 +136,47 @@
 }
 
 /* ============================================================
-   EASYJET tenant skin
+   Real airline tenant skins (hex per brand guidelines)
    ============================================================ */
 [data-tenant="easyjet"] {
-  --primary: oklch(0.7 0.21 50);                /* easyJet orange */
-  --primary-dark: oklch(0.58 0.2 45);
-  --primary-light-bg: oklch(0.96 0.04 60);
-  --primary-foreground: oklch(0.99 0.005 50);
-  --accent: oklch(0.45 0.09 230);
-  --ring: oklch(0.7 0.21 50);
+  --primary: #FF6600;
+  --primary-dark: #CC4F00;
+  --primary-light-bg: #FFF1E5;
+  --primary-foreground: #ffffff;
+  --ring: #FF6600;
+  --tenant-name: "easyJet";
 }
-
-/* ============================================================
-   SKYBRIDGE tenant skin (demo airline)
-   ============================================================ */
-[data-tenant="skybridge"] {
-  --primary: oklch(0.32 0.1 255);               /* navy #1B3A6B-ish */
-  --primary-dark: oklch(0.22 0.09 260);
-  --primary-light-bg: oklch(0.95 0.025 255);
-  --primary-foreground: oklch(0.99 0.005 255);
-  --accent: oklch(0.72 0.16 65);
-  --ring: oklch(0.32 0.1 255);
+[data-tenant="airpeace"] {
+  --primary: #006400;
+  --primary-dark: #004D00;
+  --primary-light-bg: #E5F2E5;
+  --primary-foreground: #ffffff;
+  --ring: #006400;
+  --tenant-name: "Air Peace";
+}
+[data-tenant="malaysia"] {
+  --primary: #C8102E;
+  --primary-dark: #A00D25;
+  --primary-light-bg: #FBE7EB;
+  --primary-foreground: #ffffff;
+  --ring: #C8102E;
+  --tenant-name: "Malaysia Airlines";
+}
+[data-tenant="thai"] {
+  --primary: #6B0F8C;
+  --primary-dark: #4A0A61;
+  --primary-light-bg: #F2E5F7;
+  --primary-foreground: #ffffff;
+  --ring: #6B0F8C;
+  --tenant-name: "Thai Airways";
+}
+[data-tenant="oman"] {
+  --primary: #8B0000;
+  --primary-dark: #6B0000;
+  --primary-light-bg: #F7E5E5;
+  --primary-foreground: #ffffff;
+  --ring: #8B0000;
+  --tenant-name: "Oman Air";
 }
 
 /* ============================================================
@@ -200,6 +220,13 @@
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.6; transform: scale(1.4); }
+}
+@keyframes confetti-fall {
+  0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate3d(var(--cx, 0), 110vh, 0) rotate(720deg); opacity: 0; }
+}
+@keyframes draw-check {
+  to { stroke-dashoffset: 0; }
 }
 
 @layer base {
