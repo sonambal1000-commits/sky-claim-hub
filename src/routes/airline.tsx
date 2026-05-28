@@ -122,11 +122,11 @@ function AirlinePage() {
 
         {/* SLA Gauges */}
         <section className="grid gap-4 sm:grid-cols-3">
-          {[
-            { l: "Acknowledgement", v: 98, tone: "ok"    },
-            { l: "First response",  v: 91, tone: "warn"  },
+          {([
+            { l: "Acknowledgement", v: 98, tone: "ok" },
+            { l: "First response",  v: 91, tone: "warn" },
             { l: "First contact resolution", v: 94, tone: "warn" },
-          ].map((g) => <Gauge key={g.l} {...g} />)}
+          ] as const).map((g) => <Gauge key={g.l} {...g} />)}
         </section>
 
         {/* Claims table */}
