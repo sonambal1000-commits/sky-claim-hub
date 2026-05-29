@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import {
   Lock, Download, FileJson, FileText, Mail, Copy, ChevronDown, Code2, Inbox,
+  CheckCircle, Clock, Star, type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppHeader } from "@/components/app-header";
