@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWizard } from "./wizard-context";
 
+function formatPrettyDate(iso: string) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
 export function StepFlight() {
   const { data, patch } = useWizard();
   const [looking, setLooking] = useState(false);
