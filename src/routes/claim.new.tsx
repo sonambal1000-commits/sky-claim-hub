@@ -131,8 +131,14 @@ function ClaimWizardPage() {
       </div>
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5">
-        <AnimatePresence mode="wait">
-          <motion.div key={step}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={`step-${step}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+          >
             {step === 1 && <StepFlight />}
             {step === 2 && <StepClaimType />}
             {step === 3 && <StepDetails />}

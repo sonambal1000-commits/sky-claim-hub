@@ -36,7 +36,7 @@ const initial: WizardData = {
   type: null,
   item: {
     bagType: "",
-    brand: "",
+    brand: "Samsonite",
     color: "",
     size: "",
     tagNo: "",

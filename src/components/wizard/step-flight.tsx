@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWizard } from "./wizard-context";
 
+function formatPrettyDate(iso: string) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
 export function StepFlight() {
   const { data, patch } = useWizard();
   const [looking, setLooking] = useState(false);
@@ -120,7 +127,7 @@ export function StepFlight() {
                 <Plane className="h-3.5 w-3.5 rotate-90 text-muted-foreground" />
                 <span>{data.flight.to}</span>
               </div>
-              <div className="mt-1 text-xs text-muted-foreground">{data.flight.date}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{formatPrettyDate(data.flight.date)}</div>
             </motion.div>
           )}
 
