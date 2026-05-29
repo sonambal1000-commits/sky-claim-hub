@@ -120,7 +120,7 @@ export function StepFlight() {
                 <Plane className="h-3.5 w-3.5 rotate-90 text-muted-foreground" />
                 <span>{data.flight.to}</span>
               </div>
-              <div className="mt-1 text-xs text-muted-foreground">{data.flight.date}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{formatPrettyDate(data.flight.date)}</div>
             </motion.div>
           )}
 
