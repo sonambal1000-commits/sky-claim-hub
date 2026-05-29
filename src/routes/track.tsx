@@ -23,15 +23,14 @@ function TrackPage() {
   const [ref, setRef] = useState("");
   const [showResult, setShowResult] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
+  function handleLookup() {
     setShowResult(true);
-  };
+  }
 
-  const fillDemo = () => {
+  function handleDemoLink() {
     setRef(DEMO_REF);
     setShowResult(true);
-  };
+  }
 
   const reference = ref.trim() ? ref.trim().toUpperCase() : DEMO_REF;
 
