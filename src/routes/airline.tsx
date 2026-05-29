@@ -238,14 +238,17 @@ Accept: application/json`}
   );
 }
 
-function Gauge({ l, v, tone }: { l: string; v: number; tone: "ok" | "warn" }) {
+function Gauge({ l, v, tone, icon: Icon, iconClass }: { l: string; v: number; tone: "ok" | "warn"; icon: LucideIcon; iconClass: string }) {
   const color = tone === "ok" ? "text-emerald-500" : "text-amber-500";
   const ring  = tone === "ok" ? "stroke-emerald-500" : "stroke-amber-500";
   const r = 40, c = 2 * Math.PI * r;
   const offset = c - (v / 100) * c;
   return (
     <div className="rounded-2xl border border-border bg-surface-raised p-5 text-center">
-      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{l}</div>
+      <div className="flex items-center justify-center gap-1.5 text-[14px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <Icon className={["h-4 w-4", iconClass].join(" ")} strokeWidth={1.5} />
+        {l}
+      </div>
       <div className="relative mx-auto mt-3 h-28 w-28">
         <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
           <circle cx="50" cy="50" r={r} fill="none" stroke="var(--color-muted)" strokeWidth="9" />
