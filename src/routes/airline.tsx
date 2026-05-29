@@ -137,9 +137,9 @@ function AirlinePage() {
         {/* SLA Gauges */}
         <section className="grid gap-4 sm:grid-cols-3">
           {([
-            { l: "Acknowledgement", v: 98, tone: "ok" },
-            { l: "First response",  v: 91, tone: "warn" },
-            { l: "First contact resolution", v: 94, tone: "warn" },
+            { l: "Acknowledgement", v: 98, tone: "ok", icon: CheckCircle, iconClass: "text-emerald-500" },
+            { l: "First response",  v: 91, tone: "warn", icon: Clock, iconClass: "text-amber-500" },
+            { l: "First contact resolution", v: 94, tone: "warn", icon: Star, iconClass: "text-blue-500" },
           ] as const).map((g) => <Gauge key={g.l} {...g} />)}
         </section>
 
