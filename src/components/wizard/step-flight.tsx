@@ -28,7 +28,7 @@ export function StepFlight() {
     setTimeout(() => {
       patch("flight", {
         flightNo: "U2 8472",
-        date: "2026-05-22",
+        date: "22 May 2026",
         from: "London Gatwick (LGW)",
         to: "Palma de Mallorca (PMI)",
       });
@@ -36,6 +36,7 @@ export function StepFlight() {
       setFound(true);
     }, 2000);
   };
+
 
   return (
     <motion.div
@@ -128,6 +129,7 @@ export function StepFlight() {
                 <span>{data.flight.to}</span>
               </div>
               <div className="mt-1 text-xs text-muted-foreground">{formatPrettyDate(data.flight.date)}</div>
+
             </motion.div>
           )}
 
