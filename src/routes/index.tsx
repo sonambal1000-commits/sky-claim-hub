@@ -1,119 +1,198 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "motion/react";
-import { ArrowRight, Search, ShieldCheck, Sparkles, Timer, Languages } from "lucide-react";
-import { AppHeader } from "@/components/app-header";
-import { useI18n } from "@/lib/i18n";
+import { motion, useReducedMotion } from "motion/react";
+import {
+  ArrowRight,
+  Search,
+  Clock,
+  ShieldCheck,
+  Globe,
+  Plane,
+  HelpCircle,
+  Camera,
+  CheckCircle2,
+} from "lucide-react";
+import { EagleLogo } from "@/components/eagle-logo";
+import { LanguagePicker } from "@/components/language-picker";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Eagle Claims Portal — File baggage claims in minutes" },
+      { title: "Eagle Claims — Baggage claims, beautifully simple" },
       {
         name: "description",
-        content: "Damaged or lost luggage? Start a claim in under 3 minutes, or track an existing one. Eagle Claims Portal works with the world's airlines.",
+        content:
+          "Damaged or missing bag? Start a claim in about 3 minutes — calm, secure, in your language.",
       },
     ],
   }),
   component: LandingPage,
 });
 
+const STEPS = [
+  { n: 1, icon: Plane, label: "Flight details", copy: "Enter your booking reference or flight number." },
+  { n: 2, icon: HelpCircle, label: "What happened", copy: "Choose the issue and tell us briefly." },
+  { n: 3, icon: Camera, label: "Bag & photos", copy: "Mark the damage and add a few photos." },
+  { n: 4, icon: CheckCircle2, label: "Review & submit", copy: "Check once and send securely." },
+];
+
 function LandingPage() {
-  const { t } = useI18n();
-  const steps = [
-    { n: 1, t: t("step1"), d: "Type your booking ref — we pull the rest." },
-    { n: 2, t: t("step2"), d: "Choose what happened from 6 clear options." },
-    { n: 3, t: t("step3"), d: "Tap the damaged zones, pick the damage types." },
-    { n: 4, t: t("step4"), d: "Snap exterior, close-up, tag and receipt." },
-    { n: 5, t: t("step5"), d: "Confirm consent and submit in one tap." },
-  ];
+  const reduce = useReducedMotion();
+  const fade = reduce
+    ? {}
+    : {
+        initial: { opacity: 0, y: 8 },
+        animate: { opacity: 1, y: 0 },
+        transition: { type: "spring" as const, stiffness: 160, damping: 22 },
+      };
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader />
-      <main className="mx-auto max-w-3xl px-4 pb-24 pt-6">
-        <motion.section
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 180, damping: 22 }}
-          className="relative overflow-hidden rounded-3xl border border-border bg-surface-raised p-6 shadow-[var(--shadow-soft)]"
-        >
-          <div aria-hidden="true"
-            className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-50 blur-3xl"
-            style={{ background: "var(--color-primary)" }} />
-          <div className="relative">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-light-bg px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">
-              <Sparkles className="h-3 w-3" />
-              New claim portal
-            </div>
-            <h1 className="mt-4 font-display text-[34px] font-semibold leading-[1.05] tracking-tight text-balance">
-              {t("heroTitle")}<br />
-              <span className="text-primary">{t("heroAccent")}</span>
-            </h1>
-            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted-foreground text-pretty">
-              {t("heroSub")}
-            </p>
-
-            <div className="mt-6 flex flex-col gap-2.5">
-              <Link to="/claim/new"
-                className="group inline-flex h-14 items-center justify-center gap-2 rounded-2xl gradient-primary px-5 text-[15px] font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-transform active:scale-[0.98]">
-                {t("ctaStart")}
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <Link to="/track"
-                className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-border bg-surface-raised px-5 text-[15px] font-semibold text-foreground transition-colors hover:bg-surface">
-                <Search className="h-4 w-4" />
-                {t("ctaTrack")}
-              </Link>
-            </div>
+      {/* Quiet sticky header */}
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-5">
+          <Link to="/" className="flex items-center gap-2" aria-label="Eagle Claims home">
+            <EagleLogo />
+            <span className="text-sm font-semibold tracking-tight">Eagle Claims</span>
+          </Link>
+          <div className="flex items-center gap-1">
+            <LanguagePicker />
+            <Link
+              to="/track"
+              className="ml-1 inline-flex h-9 items-center rounded-full px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Track a claim
+            </Link>
           </div>
-        </motion.section>
+        </div>
+      </header>
 
-        <section className="mt-6 grid grid-cols-3 gap-2">
-          {[
-            { icon: Timer, label: "3 min", sub: "to file" },
-            { icon: ShieldCheck, label: "Secure", sub: "GDPR-grade" },
-            { icon: Languages, label: "8 langs", sub: "supported" },
-          ].map(({ icon: Icon, label, sub }) => (
-            <div key={label} className="rounded-2xl border border-border bg-surface-raised p-3.5 text-center">
-              <Icon className="mx-auto h-4 w-4 text-primary" />
-              <div className="mt-1.5 font-display text-sm font-semibold">{label}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{sub}</div>
+      <main>
+        {/* Hero */}
+        <section className="relative flex min-h-[calc(100svh-56px)] items-center overflow-hidden px-5 py-16 sm:py-24">
+          {/* Soft radial brand glow */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-0 h-[640px] w-[640px] -translate-x-1/2 -translate-y-[60%] rounded-full opacity-[0.18] blur-3xl"
+            style={{
+              background:
+                "radial-gradient(circle at center, var(--color-primary), transparent 60%)",
+            }}
+          />
+
+          <div className="relative z-10 mx-auto w-full max-w-xl text-center">
+            <motion.div {...fade}>
+              <div className="mx-auto mb-8 inline-flex h-12 w-12 items-center justify-center rounded-full border border-border/70 bg-surface-raised/60 text-muted-foreground">
+                <Plane className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
+              </div>
+
+              <h1 className="font-display text-[40px] font-semibold leading-[1.05] tracking-tight text-balance sm:text-[56px]">
+                Baggage claims,
+                <br />
+                <span className="text-primary">beautifully simple.</span>
+              </h1>
+
+              <p className="mx-auto mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+                Damaged or missing bag? We'll guide you through it — calm, in about 3 minutes.
+              </p>
+            </motion.div>
+
+            <motion.div
+              {...(reduce
+                ? {}
+                : {
+                    initial: { opacity: 0, y: 10 },
+                    animate: { opacity: 1, y: 0 },
+                    transition: { delay: 0.08, type: "spring" as const, stiffness: 160, damping: 22 },
+                  })}
+              className="mt-10 flex flex-col items-center gap-1"
+            >
+              <Link
+                to="/claim/new"
+                className="group inline-flex h-14 w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-[15px] font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-all duration-200 hover:-translate-y-px hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 active:scale-[0.99] sm:w-auto sm:min-w-[280px]"
+              >
+                Start a claim
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
+              </Link>
+
+              <Link
+                to="/track"
+                className="mt-2 inline-flex h-11 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="underline-offset-4 hover:underline">Track an existing claim</span>
+              </Link>
+            </motion.div>
+
+            <motion.ul
+              {...(reduce
+                ? {}
+                : {
+                    initial: { opacity: 0 },
+                    animate: { opacity: 1 },
+                    transition: { delay: 0.18, duration: 0.5 },
+                  })}
+              className="mt-12 flex flex-wrap items-center justify-center gap-2"
+              aria-label="Reassurance"
+            >
+              {[
+                { icon: Clock, label: "3 min" },
+                { icon: ShieldCheck, label: "Secure" },
+                { icon: Globe, label: "8 languages" },
+              ].map(({ icon: Icon, label }) => (
+                <li
+                  key={label}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-surface-raised/60 px-3 py-1.5 text-xs font-medium text-muted-foreground"
+                >
+                  <Icon className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
+                  {label}
+                </li>
+              ))}
+            </motion.ul>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="border-t border-border/60 px-5 py-20 sm:py-28">
+          <div className="mx-auto max-w-5xl">
+            <div className="text-center">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                How it works
+              </div>
+              <h2 className="mt-2 font-display text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                Four calm steps. About three minutes.
+              </h2>
             </div>
-          ))}
-        </section>
 
-        <section className="mt-8">
-          <h2 className="font-display text-lg font-semibold tracking-tight">{t("howItWorks")}</h2>
-          <ol className="mt-3 space-y-2.5">
-            {steps.map((s) => (
-              <li key={s.n} className="flex items-start gap-3 rounded-2xl border border-border bg-surface-raised p-4">
-                <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary-light-bg font-display text-sm font-semibold text-primary">
-                  {s.n}
-                </div>
-                <div>
-                  <div className="text-sm font-semibold">{s.t}</div>
-                  <div className="text-xs text-muted-foreground">{s.d}</div>
-                </div>
-              </li>
-            ))}
-          </ol>
+            <ol className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+              {STEPS.map(({ n, icon: Icon, label, copy }) => (
+                <li key={n} className="flex flex-col items-start">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-7 w-7 place-items-center rounded-full border border-border text-[11px] font-semibold tabular-nums text-muted-foreground">
+                      {n}
+                    </span>
+                    <Icon className="h-5 w-5 text-muted-foreground" strokeWidth={1.5} aria-hidden="true" />
+                  </div>
+                  <h3 className="mt-4 text-sm font-semibold text-foreground">{label}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{copy}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </section>
-
-        <section className="mt-8 grid grid-cols-2 gap-2">
-          <Link to="/staff/login" className="rounded-2xl border border-border bg-surface-raised p-4 transition-colors hover:bg-surface">
-            <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">For staff</div>
-            <div className="mt-1 text-sm font-semibold">Sign in to console →</div>
-          </Link>
-          <Link to="/airline" className="rounded-2xl border border-border bg-surface-raised p-4 transition-colors hover:bg-surface">
-            <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">For airlines</div>
-            <div className="mt-1 text-sm font-semibold">View tenant dashboard →</div>
-          </Link>
-        </section>
-
-        <footer className="mt-12 text-center text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-          © Eagle Claims Portal · Assisting the world's airlines
-        </footer>
       </main>
+
+      <footer className="border-t border-border/60 px-5 py-8">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-[11px] text-muted-foreground sm:flex-row">
+          <div>© Eagle Claims · Powered by Eagle Claims</div>
+          <div className="flex items-center gap-4">
+            <a href="#" className="hover:text-foreground">Privacy</a>
+            <a href="#" className="hover:text-foreground">Sub-processors</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
