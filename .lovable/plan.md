@@ -1,56 +1,66 @@
-## Goal
+## What I'll build
 
-Replace the current `src/routes/index.tsx` with a calm, single-purpose landing page that gets a stressed passenger from "I landed" → "tap Start a claim" in under 2 seconds. Mobile-first, scaled up for desktop with more whitespace (never a two-column app-shot hero).
+### 1. Landing page redesign — "Editorial serif" direction
 
-## Scope
+Rebuild `src/routes/index.tsx` to match the selected v2 prototype exactly. Composition, density, hierarchy and motion register all stay faithful to the chosen direction.
 
-- Only edits `src/routes/index.tsx` (page) and adds one minimal header variant inline (don't touch the existing `AppHeader` — it carries tenant/theme controls used elsewhere). The landing page renders its own quiet header per the brief.
-- No changes to routing, tenant provider, or design tokens. Brand colour comes from existing `var(--color-primary)`. The brief's `#FF6600` is already the easyJet tenant skin — we keep it themeable, not hardcoded.
+**Typography (added to `src/styles.css`):**
+- Add Google Font import: `Instrument Serif` (display) — Inter stays as body.
+- New token `--font-serif: "Instrument Serif", Georgia, serif;` exposed via `@theme`.
 
-## Layout
+**Header (fixed, replaces current quirky version):**
+- Single wordmark only — fixes the duplicated "Eagle Claims · Eagle Claims" bug.
+- Backdrop-blur translucent bar with a hairline border tinted in primary.
+- Right side: language picker + "Track a claim" ghost link.
 
-1. **Header (sticky, quiet, ~56px)**
-   - Left: `EagleLogo` + small "Eagle Claims" wordmark.
-   - Right: `LanguagePicker` (existing) + ghost text link "Track a claim" → `/track`.
-   - No nav, no tenant switcher, no theme toggle on this page.
+**Hero (centered, single column, max-w-2xl):**
+- Small uppercase pill: "Official airport partner" in primary tint.
+- H1 in Instrument Serif, two lines, italic primary accent on "beautifully simple."
+- 16–18 word muted subhead.
+- Primary CTA (filled teal, arrow icon) + Secondary CTA (white outlined teal) — both full-width up to `max-w-sm`, stacked.
+- Trust row: three minimal icon+label items (3 min, Secure, 8 languages), low-opacity, no pills — quieter than current chips.
 
-2. **Hero (centered, full first viewport, max-w ~640px on desktop)**
-   - Soft radial glow background using `var(--color-primary)` at low opacity, plus a single light line-icon (Lucide `Plane`, 1.25 stroke, muted) floating above the headline.
-   - H1 display, large, tight leading, balanced:
-     "Baggage claims," / **"beautifully simple."** (second line in `text-primary`).
-   - Sub: muted, ~16 words: "Damaged or missing bag? We'll guide you through it — calm, in about 3 minutes."
-   - Primary CTA: full-width on mobile, auto on desktop, ≥56px, brand-filled, `rounded-2xl`, `shadow-elegant`, label "Start a claim" + `ArrowRight` that translates on hover.
-   - Secondary: ghost text button directly below — `Search` icon + "Track an existing claim". No border, no fill; underline on hover. Visually subordinate.
-   - Trust chips row: three small muted pills — `Clock` "3 min", `ShieldCheck` "Secure", `Globe` "8 languages". Single row, centered, neutral colours only.
+**How it works (timeline, replaces current 4-step row):**
+- Section heading in serif, 12px primary divider.
+- Three steps along a vertical gradient line (primary → fade):
+  1. Verify flight
+  2. Snap & describe
+  3. Instant resolution (final step uses solid primary tile with checkmark)
+- Each step: 64×64 rounded tile + serif/sans heading + muted body.
 
-3. **How it works (below the fold, calm strip)**
-   - Section heading small + muted ("How it works").
-   - 4 numbered steps in a single horizontal row on desktop, stacked on mobile. Each: tiny circled numeral, light Lucide icon (`Plane`, `HelpCircle`, `Camera`, `CheckCircle`), short label + one line of copy. No cards, no borders — just rhythm and whitespace. Separator dots between on desktop.
+**Footer:** keep current minimal footer (copyright + privacy/sub-processors).
 
-4. **Footer (one line, whisper)**
-   - "© Eagle Claims · Powered by Eagle Claims" + tiny links Privacy · Sub-processors. Centered, muted.
+**Motion (Motion for React, reduced-motion guarded):**
+- Hero fade-up (existing pattern).
+- CTA hover lift 1px + arrow `translate-x-0.5`.
+- No other animations — matches the calm register.
 
-## Visual rules
+**Tokens, not hex:**
+- All teal usages go through `var(--color-primary)` / `bg-primary` / `text-primary` / `border-primary/10` — no hardcoded `#1A6B5A` in the JSX. The prototype's literal hex values are translated to existing semantic tokens.
 
-- Brand colour appears only in: the "beautifully simple." word, the primary button, and the soft radial glow. Everything else neutral (`foreground` / `muted-foreground` / `border`).
-- Generous vertical rhythm: hero section uses `min-h-[calc(100svh-56px)]` with content centered.
-- All colours via tokens (`bg-primary`, `text-primary`, `text-muted-foreground`, `border-border`). No hex.
-- Dark mode: works automatically via existing tokens; verify glow opacity reads on dark.
+### 2. New `/sitemap` route — full navigation index
 
-## Motion
+Create `src/routes/sitemap.tsx`. Single-purpose internal page listing every route in the app, grouped by audience. Same editorial-serif styling so it doesn't feel like a separate app.
 
-- Hero content: single staged fade-up via Motion (`initial opacity:0 y:8` → spring), reduced-motion guarded by `useReducedMotion()`.
-- Primary button: hover lifts 1px, arrow translates +2px; tap scales 0.98.
-- Nothing else animates.
+**Groups:**
+- **Passenger** — `/` (landing), `/claim/new` (start a claim wizard), `/track` (track lookup), `/track/$claimId` (sample tracking detail, linked with the demo ref `EC-7A4F2B`).
+- **Airline / B2B** — `/airline` (airline marketing page).
+- **Staff console** — `/staff/login`, `/staff/dashboard` (with note: "Dashboard / Claims / Reports / Settings live inside this single route as tabs").
+- **Meta** — `/sitemap` (this page).
 
-## Accessibility
+Each entry: route path in mono, title, one-line description, and a "Open" link button. Plus a small "Tender demo flow" callout at the top suggesting the recommended click order for the 12 June 2026 demo (Landing → Start a claim → Track → Staff login → Dashboard).
 
-- Semantic `<header> <main> <section> <footer>`, one `<h1>`.
-- All tap targets ≥44px (CTAs already ≥56px; secondary link gets `py-3 px-4`).
-- Visible focus rings via existing `ring` token.
-- `aria-label` on icon-only header items; trust chips marked `aria-hidden` decorations with text remaining readable.
+A discreet "Sitemap" link is added to the landing page footer so the demo presenter can reach it in one click, without affecting the passenger experience.
 
-## Out of scope
+### Files touched
 
-- No new routes, no tenant logic changes, no token edits, no new dependencies (Motion + Lucide already in project).
-- Existing routes (`/claim/new`, `/track`, `/staff/*`, `/airline`) untouched.
+- `src/styles.css` — add Instrument Serif import + `--font-serif` token.
+- `src/routes/index.tsx` — full rewrite to v2 direction, token-based colors.
+- `src/routes/sitemap.tsx` — new file.
+- `src/routes/__root.tsx` — no edits expected; the TanStack plugin auto-registers the new route on next build.
+
+### Out of scope
+
+- No changes to the claim wizard, track, airline, or staff routes.
+- No new tenant/brand logic, no new dependencies, no copy changes to other screens.
+- Sample tracking ref shown on `/sitemap` is read-only — no data wiring beyond a `<Link>`.
