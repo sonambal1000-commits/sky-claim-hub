@@ -161,9 +161,8 @@ function SitemapPage() {
               <ul className="divide-y divide-border/70 overflow-hidden rounded-2xl border border-border/70 bg-surface-raised">
                 {group.entries.map((e) => (
                   <li key={e.path}>
-                    {/* @ts-expect-error TanStack typed routes — we resolve params at runtime */}
                     <Link
-                      to={e.to}
+                      to={e.to as string}
                       params={e.params as never}
                       className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-primary/[0.04]"
                     >
