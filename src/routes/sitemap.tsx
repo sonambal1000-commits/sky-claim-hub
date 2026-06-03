@@ -82,7 +82,7 @@ const DEMO_FLOW = [
   { to: "/staff/dashboard", label: "Dashboard" },
 ] as const;
 
-function SitemapPage() {
+export function SitemapPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <nav className="fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b border-primary/5 bg-background/80 px-6 py-4 backdrop-blur-md">
