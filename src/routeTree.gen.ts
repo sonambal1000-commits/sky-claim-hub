@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as AirlineRouteImport } from './routes/airline'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrackClaimIdRouteImport } from './routes/track.$claimId'
@@ -20,6 +21,11 @@ import { Route as ClaimNewRouteImport } from './routes/claim.new'
 const TrackRoute = TrackRouteImport.update({
   id: '/track',
   path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapRoute = SitemapRouteImport.update({
+  id: '/sitemap',
+  path: '/sitemap',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AirlineRoute = AirlineRouteImport.update({
@@ -56,6 +62,7 @@ const ClaimNewRoute = ClaimNewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/airline': typeof AirlineRoute
+  '/sitemap': typeof SitemapRoute
   '/track': typeof TrackRouteWithChildren
   '/claim/new': typeof ClaimNewRoute
   '/staff/dashboard': typeof StaffDashboardRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/airline': typeof AirlineRoute
+  '/sitemap': typeof SitemapRoute
   '/track': typeof TrackRouteWithChildren
   '/claim/new': typeof ClaimNewRoute
   '/staff/dashboard': typeof StaffDashboardRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/airline': typeof AirlineRoute
+  '/sitemap': typeof SitemapRoute
   '/track': typeof TrackRouteWithChildren
   '/claim/new': typeof ClaimNewRoute
   '/staff/dashboard': typeof StaffDashboardRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/airline'
+    | '/sitemap'
     | '/track'
     | '/claim/new'
     | '/staff/dashboard'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/airline'
+    | '/sitemap'
     | '/track'
     | '/claim/new'
     | '/staff/dashboard'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/airline'
+    | '/sitemap'
     | '/track'
     | '/claim/new'
     | '/staff/dashboard'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AirlineRoute: typeof AirlineRoute
+  SitemapRoute: typeof SitemapRoute
   TrackRoute: typeof TrackRouteWithChildren
   ClaimNewRoute: typeof ClaimNewRoute
   StaffDashboardRoute: typeof StaffDashboardRoute
@@ -127,6 +140,13 @@ declare module '@tanstack/react-router' {
       path: '/track'
       fullPath: '/track'
       preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap': {
+      id: '/sitemap'
+      path: '/sitemap'
+      fullPath: '/sitemap'
+      preLoaderRoute: typeof SitemapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/airline': {
@@ -187,6 +207,7 @@ const TrackRouteWithChildren = TrackRoute._addFileChildren(TrackRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AirlineRoute: AirlineRoute,
+  SitemapRoute: SitemapRoute,
   TrackRoute: TrackRouteWithChildren,
   ClaimNewRoute: ClaimNewRoute,
   StaffDashboardRoute: StaffDashboardRoute,
@@ -195,3 +216,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
