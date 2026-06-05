@@ -8,7 +8,7 @@ export const Route = createFileRoute("/staff/claims/$claimId/record")({
     meta: [{ title: `Full record · ${params.claimId} · Eagle Claims` }],
   }),
   loader: ({ params }) => {
-    const claim = DEMO_CLAIMS.find((c) => c.ref === params.claimId);
+    const claim = DEMO_CLAIMS.find((c) => c.ref === params.claimId)!;
     if (!claim) throw notFound();
     return { claim };
   },
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/staff/claims/$claimId/record")({
 });
 
 function FullRecordPage() {
-  const { claim } = Route.useLoaderData() as { claim: import("@/lib/demo-data").DemoClaim };
+  const { claim } = Route.useLoaderData();
   const meta = AIRLINE_META[claim.airline];
   const sla = slaTone(claim.slaHours);
 
