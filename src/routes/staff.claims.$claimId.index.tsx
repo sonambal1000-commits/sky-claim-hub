@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { DEMO_CLAIMS, STATUS_TONE, slaTone, formatSla, AIRLINE_META } from "@/lib/demo-data";
 
-export const Route = createFileRoute("/staff/claims/$claimId")({
+export const Route = createFileRoute("/staff/claims/$claimId/")({
   head: ({ params }) => ({
     meta: [{ title: `Claim ${params.claimId} · Eagle Claims` }],
   }),

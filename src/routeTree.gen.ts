@@ -17,7 +17,7 @@ import { Route as TrackClaimIdRouteImport } from './routes/track.$claimId'
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
 import { Route as StaffDashboardRouteImport } from './routes/staff.dashboard'
 import { Route as ClaimNewRouteImport } from './routes/claim.new'
-import { Route as StaffClaimsClaimIdRouteImport } from './routes/staff.claims.$claimId'
+import { Route as StaffClaimsClaimIdIndexRouteImport } from './routes/staff.claims.$claimId.index'
 import { Route as StaffClaimsClaimIdRecordRouteImport } from './routes/staff.claims.$claimId.record'
 
 const TrackRoute = TrackRouteImport.update({
@@ -60,16 +60,16 @@ const ClaimNewRoute = ClaimNewRouteImport.update({
   path: '/claim/new',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StaffClaimsClaimIdRoute = StaffClaimsClaimIdRouteImport.update({
-  id: '/staff/claims/$claimId',
-  path: '/staff/claims/$claimId',
+const StaffClaimsClaimIdIndexRoute = StaffClaimsClaimIdIndexRouteImport.update({
+  id: '/staff/claims/$claimId/',
+  path: '/staff/claims/$claimId/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StaffClaimsClaimIdRecordRoute =
   StaffClaimsClaimIdRecordRouteImport.update({
-    id: '/record',
-    path: '/record',
-    getParentRoute: () => StaffClaimsClaimIdRoute,
+    id: '/staff/claims/$claimId/record',
+    path: '/staff/claims/$claimId/record',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -81,8 +81,8 @@ export interface FileRoutesByFullPath {
   '/staff/dashboard': typeof StaffDashboardRoute
   '/staff/login': typeof StaffLoginRoute
   '/track/$claimId': typeof TrackClaimIdRoute
-  '/staff/claims/$claimId': typeof StaffClaimsClaimIdRouteWithChildren
   '/staff/claims/$claimId/record': typeof StaffClaimsClaimIdRecordRoute
+  '/staff/claims/$claimId/': typeof StaffClaimsClaimIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -93,8 +93,8 @@ export interface FileRoutesByTo {
   '/staff/dashboard': typeof StaffDashboardRoute
   '/staff/login': typeof StaffLoginRoute
   '/track/$claimId': typeof TrackClaimIdRoute
-  '/staff/claims/$claimId': typeof StaffClaimsClaimIdRouteWithChildren
   '/staff/claims/$claimId/record': typeof StaffClaimsClaimIdRecordRoute
+  '/staff/claims/$claimId': typeof StaffClaimsClaimIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,8 +106,8 @@ export interface FileRoutesById {
   '/staff/dashboard': typeof StaffDashboardRoute
   '/staff/login': typeof StaffLoginRoute
   '/track/$claimId': typeof TrackClaimIdRoute
-  '/staff/claims/$claimId': typeof StaffClaimsClaimIdRouteWithChildren
   '/staff/claims/$claimId/record': typeof StaffClaimsClaimIdRecordRoute
+  '/staff/claims/$claimId/': typeof StaffClaimsClaimIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,8 +120,8 @@ export interface FileRouteTypes {
     | '/staff/dashboard'
     | '/staff/login'
     | '/track/$claimId'
-    | '/staff/claims/$claimId'
     | '/staff/claims/$claimId/record'
+    | '/staff/claims/$claimId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -132,8 +132,8 @@ export interface FileRouteTypes {
     | '/staff/dashboard'
     | '/staff/login'
     | '/track/$claimId'
-    | '/staff/claims/$claimId'
     | '/staff/claims/$claimId/record'
+    | '/staff/claims/$claimId'
   id:
     | '__root__'
     | '/'
@@ -144,8 +144,8 @@ export interface FileRouteTypes {
     | '/staff/dashboard'
     | '/staff/login'
     | '/track/$claimId'
-    | '/staff/claims/$claimId'
     | '/staff/claims/$claimId/record'
+    | '/staff/claims/$claimId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -156,7 +156,8 @@ export interface RootRouteChildren {
   ClaimNewRoute: typeof ClaimNewRoute
   StaffDashboardRoute: typeof StaffDashboardRoute
   StaffLoginRoute: typeof StaffLoginRoute
-  StaffClaimsClaimIdRoute: typeof StaffClaimsClaimIdRouteWithChildren
+  StaffClaimsClaimIdRecordRoute: typeof StaffClaimsClaimIdRecordRoute
+  StaffClaimsClaimIdIndexRoute: typeof StaffClaimsClaimIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -217,19 +218,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClaimNewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/staff/claims/$claimId': {
-      id: '/staff/claims/$claimId'
+    '/staff/claims/$claimId/': {
+      id: '/staff/claims/$claimId/'
       path: '/staff/claims/$claimId'
-      fullPath: '/staff/claims/$claimId'
-      preLoaderRoute: typeof StaffClaimsClaimIdRouteImport
+      fullPath: '/staff/claims/$claimId/'
+      preLoaderRoute: typeof StaffClaimsClaimIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/staff/claims/$claimId/record': {
       id: '/staff/claims/$claimId/record'
-      path: '/record'
+      path: '/staff/claims/$claimId/record'
       fullPath: '/staff/claims/$claimId/record'
       preLoaderRoute: typeof StaffClaimsClaimIdRecordRouteImport
-      parentRoute: typeof StaffClaimsClaimIdRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -244,17 +245,6 @@ const TrackRouteChildren: TrackRouteChildren = {
 
 const TrackRouteWithChildren = TrackRoute._addFileChildren(TrackRouteChildren)
 
-interface StaffClaimsClaimIdRouteChildren {
-  StaffClaimsClaimIdRecordRoute: typeof StaffClaimsClaimIdRecordRoute
-}
-
-const StaffClaimsClaimIdRouteChildren: StaffClaimsClaimIdRouteChildren = {
-  StaffClaimsClaimIdRecordRoute: StaffClaimsClaimIdRecordRoute,
-}
-
-const StaffClaimsClaimIdRouteWithChildren =
-  StaffClaimsClaimIdRoute._addFileChildren(StaffClaimsClaimIdRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AirlineRoute: AirlineRoute,
@@ -263,8 +253,19 @@ const rootRouteChildren: RootRouteChildren = {
   ClaimNewRoute: ClaimNewRoute,
   StaffDashboardRoute: StaffDashboardRoute,
   StaffLoginRoute: StaffLoginRoute,
-  StaffClaimsClaimIdRoute: StaffClaimsClaimIdRouteWithChildren,
+  StaffClaimsClaimIdRecordRoute: StaffClaimsClaimIdRecordRoute,
+  StaffClaimsClaimIdIndexRoute: StaffClaimsClaimIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
