@@ -59,18 +59,24 @@ const GROUPS: Group[] = [
     entries: [
       { path: "/staff/login", title: "Staff login", desc: "Email + password sign-in for claims handlers.", to: "/staff/login" },
       {
+        path: "/staff/dashboard",
+        title: "Staff dashboard",
+        desc: "Dashboard, Claims, Reports and Settings — single SPA-style route.",
+        to: "/staff/dashboard",
+      },
+      {
         path: "/staff/claims/$claimId",
         title: "Claim detail",
         desc: "Single-claim view — timeline, SLA, settlement, passenger & flight cards.",
         to: "/staff/claims/$claimId",
-        params: { claimId: "EC-268527-4821" },
+        params: { claimId: "EC-260527-4821" },
       },
       {
         path: "/staff/claims/$claimId/record",
         title: "Full record",
         desc: "Complete claim dossier — chronological activity log with timelines, SLA breakdown and document list.",
         to: "/staff/claims/$claimId/record",
-        params: { claimId: "EC-268527-4821" },
+        params: { claimId: "EC-260527-4821" },
       },
     ],
   },
