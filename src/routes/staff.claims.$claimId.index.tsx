@@ -4,14 +4,14 @@ import {
   ArrowLeft, FileText, MessageCircle, Package, Send, CheckCircle2,
   Plane, User, Calendar, MapPin, Hash, Briefcase, Receipt, ChevronRight,
 } from "lucide-react";
-import { DEMO_CLAIMS, STATUS_TONE, slaTone, formatSla, AIRLINE_META } from "@/lib/demo-data";
+import { DEMO_CLAIMS, STATUS_TONE, slaTone, formatSla, AIRLINE_META, type DemoClaim } from "@/lib/demo-data";
 
 export const Route = createFileRoute("/staff/claims/$claimId/")({
   head: ({ params }) => ({
     meta: [{ title: `Claim ${params.claimId} · Eagle Claims` }],
   }),
   loader: ({ params }) => {
-    const claim = DEMO_CLAIMS.find((c) => c.ref === params.claimId)!;
+    const claim = DEMO_CLAIMS.find((c) => c.ref === params.claimId);
     if (!claim) throw notFound();
     return { claim };
   },
@@ -41,7 +41,7 @@ const ACTIONS = [
 ];
 
 function ClaimDetailPage() {
-  const { claim } = Route.useLoaderData();
+  const { claim } = Route.useLoaderData() as { claim: DemoClaim };
   const meta = AIRLINE_META[claim.airline];
   const sla = slaTone(claim.slaHours);
 

@@ -1,14 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { ArrowLeft, Printer, Download, Plane, User, Package, FileText, ShieldCheck, Clock } from "lucide-react";
-import { DEMO_CLAIMS, STATUS_TONE, AIRLINE_META, formatSla, slaTone } from "@/lib/demo-data";
+import { DEMO_CLAIMS, STATUS_TONE, AIRLINE_META, formatSla, slaTone, type DemoClaim } from "@/lib/demo-data";
 
 export const Route = createFileRoute("/staff/claims/$claimId/record")({
   head: ({ params }) => ({
     meta: [{ title: `Full record · ${params.claimId} · Eagle Claims` }],
   }),
   loader: ({ params }) => {
-    const claim = DEMO_CLAIMS.find((c) => c.ref === params.claimId)!;
+    const claim = DEMO_CLAIMS.find((c) => c.ref === params.claimId);
     if (!claim) throw notFound();
     return { claim };
   },
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/staff/claims/$claimId/record")({
 });
 
 function FullRecordPage() {
-  const { claim } = Route.useLoaderData();
+  const { claim } = Route.useLoaderData() as { claim: DemoClaim };
   const meta = AIRLINE_META[claim.airline];
   const sla = slaTone(claim.slaHours);
 
