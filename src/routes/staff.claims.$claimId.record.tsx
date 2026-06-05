@@ -26,7 +26,7 @@ export const Route = createFileRoute("/staff/claims/$claimId/record")({
 });
 
 function FullRecordPage() {
-  const { claim } = Route.useLoaderData();
+  const { claim } = Route.useLoaderData() as { claim: import("@/lib/demo-data").DemoClaim };
   const meta = AIRLINE_META[claim.airline];
   const sla = slaTone(claim.slaHours);
 
